@@ -1,0 +1,71 @@
+{% extends 'unfold/layouts/base.html' %}
+
+{% block extra_styles %}
+{{ block.super }}
+<style>
+    /* --- INPUTLAR DIZAYNI --- */
+
+    /* 1. Hamma inputlar, textarea va selectlar uchun umumiy qoida */
+    html.dark body input[type="text"],
+    html.dark body input[type="password"],
+    html.dark body input[type="email"],
+    html.dark body input[type="url"],
+    html.dark body input[type="number"],
+    html.dark body input[type="file"],
+    html.dark body textarea,
+    html.dark body select {
+        /* Fon: To'q kulrang (Qora emast) */
+        background-color: #374151 !important;
+
+        /* Chegara: Yorqin kulrang va 2px qalinlikda */
+        border: 2px solid #9CA3AF !important;
+
+        /* Yozuv rangi: Oq */
+        color: #ffffff !important;
+
+        /* Burchaklar */
+        border-radius: 8px !important;
+
+        /* Ichki masofa */
+        padding: 12px !important;
+
+        /* Soyani o'chiramiz, xalaqit bermasligi uchun */
+        box-shadow: none !important;
+    }
+
+    /* 2. Textarea (Katta matn) balandligi */
+    html.dark body textarea {
+        min-height: 200px !important;
+        font-family: monospace !important; /* Kod yozgandek chiroyli turadi */
+        font-size: 14px !important;
+    }
+
+    /* 3. INPUT BOSILGANDA (FOCUS) - SARIQ BO'LSIN */
+    html.dark body input:focus,
+    html.dark body textarea:focus,
+    html.dark body select:focus {
+        /* Chegara sariqqa aylanadi */
+        border-color: #FBBF24 !important;
+        /* Foni sal o'zgaradi */
+        background-color: #4B5563 !important;
+        /* Tashqi yog'du */
+        box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.3) !important;
+        outline: none !important;
+    }
+
+    /* 4. LEYBLAR (Tepadagi yozuvlar) */
+    html.dark body label {
+        color: #E5E7EB !important; /* Oqish */
+        font-size: 14px !important;
+        font-weight: 700 !important; /* Qalin */
+        margin-bottom: 8px !important;
+        display: block !important;
+    }
+
+    /* 5. YORDAMCHI MATNLAR (Help text) */
+    .help-block, .help, .text-xs {
+        color: #9CA3AF !important; /* Och kulrang */
+    }
+
+</style>
+{% endblock %}

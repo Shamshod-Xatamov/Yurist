@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- STYLE: Yurakcha va Buttonlar uchun (React dizaynini saqlash) -->
+<style>
+    /* Yurakcha bosilganda qizarishi uchun */
+    #likeBtn.liked-active svg {
+        fill: #dc2626;
+        color: #dc2626;
+        stroke: #dc2626;
+        transition: all 0.2s ease;
+    }
+
+    /* Shadcn UI Button stillarini imitatsiya qilish */
+    .btn-ghost { @apply hover:bg-gray-100; }
+    .btn-outline { @apply border border-gray-200 bg-white hover:bg-gray-100; }
+    .btn-default { @apply bg-gray-900 text-white hover:bg-gray-800; }
+</style>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- ARTICLE CONTAINER -->
+<article class="py-24 lg:py-32 bg-white">
+    <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+
+        <!-- BACK BUTTON -->
+        <div class="mb-12">
+    <a href="{% url 'blog_list' %}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors h-10 px-4 py-2 bg-gray-900 text-white hover:bg-gray-700 shadow-sm">
+        <i data-lucide="arrow-left" class="mr-2 w-4 h-4 text-white"></i>
+        Maqolalarga qaytish
+    </a>
+</div>
+
+        <!-- EDITORIAL LAYOUT - MAX WIDTH 800px -->
+        <div class="max-w-[800px] mx-auto">
+
+            <!-- ARTICLE HEADER -->
+            <div class="space-y-6 mb-12">
+                <!-- Category & Tags -->
+                <div class="flex items-center gap-3">
+                    <span class="px-4 py-2 bg-yellow-600/10 text-yellow-700 rounded-full text-sm font-medium">
+                        {{ post.category.name }}
+                    </span>
+                    <!-- Faqat 2 ta tag ko'rsatish -->
+                    {% for tag in post.tags.all|slice:":2" %}
+                    <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
+                        {{ tag.name }}
+                    </span>
+                    {% endfor %}
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-4xl lg:text-5xl text-gray-900 font-serif font-medium leading-tight break-words">
+                    {{ post.title }}
+                </h1>
+
+                <!-- Excerpt -->
+                <p class="text-xl text-gray-500 leading-relaxed break-words">
+                    {{ post.excerpt }}
+                </p>
+
+                <!-- Meta Info -->
+                <div class="flex flex-wrap items-center gap-6 pt-6 border-t border-gray-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-yellow-600/10 rounded-full flex items-center justify-center">
+                            <i data-lucide="user" class="w-6 h-6 text-yellow-700"></i>
+                        </div>
+                        <div>
+                            <div class="text-gray-900 font-medium">{{ post.author.get_full_name|default:"Admin" }}</div>
+                            <div class="text-sm text-gray-500">Yurist Advokat</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1 text-gray-500">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span>{{ post.published_date|date:"d F, Y" }}</span>
+                    </div>
+
+                    <div class="flex items-center gap-1 text-gray-500">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span>{{ post.read_time }} daqiqa o'qish</span>
+                    </div>
+
+                    <div class="flex items-center gap-1 text-gray-500">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                        <span>{{ post.views }} ko'rildi</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURED IMAGE (16:9) -->
+            {% if post.image %}
+            <div class="relative w-full aspect-video overflow-hidden rounded-2xl mb-12 shadow-lg border border-gray-100">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover">
+            </div>
+            {% endif %}
+
+            <!-- ARTICLE CONTENT -->
+            <div class="prose prose-lg max-w-none mb-12
+                prose-headings:font-serif prose-headings:text-gray-900
+                prose-p:text-gray-600 prose-p:leading-relaxed
+                prose-a:text-yellow-600 prose-a:no-underline hover:prose-a:underline
+                prose-strong:text-gray-900
+                prose-ul:text-gray-600 prose-ol:text-gray-600
+                prose-blockquote:border-l-yellow-600 prose-blockquote:text-gray-900 prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-4
+                prose-img:rounded-lg">
+                {{ post.content|safe }}
+            </div>
+
+            <!-- SOCIAL ACTIONS -->
+            <div class="flex items-center justify-between pt-12 pb-12 border-t border-gray-200">
+                <div class="flex items-center gap-4">
+                    <!-- LIKE BUTTON -->
+                    <button id="likeBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-gray-200 bg-white hover:bg-gray-50 h-10 px-4 py-2">
+                        <i data-lucide="heart" class="w-5 h-5 mr-2 text-gray-500"></i>
+                        <span id="likeCount">{{ post.likes }}</span>
+                    </button>
+
+                    <!-- COMMENT TOGGLE BUTTON -->
+                    <button id="commentToggleBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-gray-200 bg-white hover:bg-gray-50 h-10 px-4 py-2">
+                        <i data-lucide="message-circle" class="w-5 h-5 mr-2 text-gray-500"></i>
+                        <span>{{ post.comments.count }}</span>
+                    </button>
+                </div>
+
+                <!-- SHARE BUTTON -->
+                <button id="shareBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-gray-900 text-white hover:bg-gray-700 h-10 px-4 py-2 min-w-[100px] shadow-sm">
+    <i data-lucide="share-2" class="w-4 h-4 mr-2 text-white"></i>
+    <span>Ulashish</span>
+</button>
+            </div>
+
+            <!-- COMMENTS SECTION (HIDDEN DEFAULT) -->
+            <div id="commentsSection" class="hidden mt-16 space-y-8 transition-all duration-300">
+                <h2 class="text-3xl text-gray-900 font-serif">
+                    Izohlar ({{ post.comments.count }})
+                </h2>
+
+                <!-- COMMENT FORM -->
+                <form method="POST" action="" class="bg-white p-6 rounded-sm border border-gray-200 space-y-4 shadow-sm">
+                    {% csrf_token %}
+                    <h3 class="text-gray-900 font-medium">
+                        Fikr qoldirish
+                    </h3>
+
+                    <input
+                        type="text"
+                        name="author_name"
+                        placeholder="Ismingiz"
+                        required
+                        class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+
+                    <textarea
+                        name="content"
+                        placeholder="Fikringizni yozing..."
+                        rows="4"
+                        required
+                        class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-600 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                    ></textarea>
+
+                    <button
+                        type="submit"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-yellow-600 text-white hover:bg-yellow-700 h-10 px-4 py-2"
+                    >
+                        <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                        Yuborish
+                    </button>
+                </form>
+
+                <!-- COMMENTS LIST -->
+                <div class="space-y-6">
+                    {% for comment in post.comments.all %}
+                    <div class="bg-white p-6 rounded-sm border border-gray-200 shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <!-- Initials Avatar -->
+                            <div class="w-10 h-10 bg-yellow-600/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-yellow-700 font-bold text-sm">
+                                    {{ comment.author_name|slice:":2"|upper }}
+                                </span>
+                            </div>
+
+                            <div class="flex-1 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="text-gray-900 font-medium">{{ comment.author_name }}</div>
+                                        <div class="text-sm text-gray-500">
+                                            {{ comment.date|date:"d F, Y" }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    {{ comment.content }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p class="text-gray-500 italic text-center">Hozircha izohlar yo'q.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</article>
+
+<!-- JAVASCRIPT LOGIC -->
+<!-- JAVASCRIPT LOGIC (Updated) -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+    // 1. Sahifa to'liq yuklangandan keyin ikonkalarni chizish
+    document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+    });
+
+    // 2. LIKE BUTTON LOGIC
+    const likeBtn = document.getElementById('likeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let isLiked = false;
+
+    if (likeBtn) {
+        likeBtn.addEventListener('click', function() {
+            isLiked = !isLiked;
+            let count = parseInt(likeCount.innerText);
+
+            // Ikonkani topamiz
+            const icon = likeBtn.querySelector('i') || likeBtn.querySelector('svg');
+
+            if (isLiked) {
+                likeBtn.classList.add('liked-active', 'bg-red-50', 'border-red-100');
+                likeCount.innerText = count + 1;
+                likeCount.classList.add('text-red-600');
+            } else {
+                likeBtn.classList.remove('liked-active', 'bg-red-50', 'border-red-100');
+                likeCount.innerText = count - 1;
+                likeCount.classList.remove('text-red-600');
+            }
+        });
+    }
+
+    // 3. COMMENT TOGGLE LOGIC
+    const commentToggleBtn = document.getElementById('commentToggleBtn');
+    const commentsSection = document.getElementById('commentsSection');
+
+    if (commentToggleBtn && commentsSection) {
+        commentToggleBtn.addEventListener('click', function() {
+            commentsSection.classList.toggle('hidden');
+            if (!commentsSection.classList.contains('hidden')) {
+                commentsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    // 4. SHARE BUTTON LOGIC
+    // 3. SHARE BUTTON LOGIC (Updated)
+    const shareBtn = document.getElementById('shareBtn');
+
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            const originalHTML = shareBtn.innerHTML;
+
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+
+                // 1. Bosilganda YASHIL rangga o'tadi
+                shareBtn.classList.remove('bg-gray-900', 'text-white', 'hover:bg-gray-700'); // Eski ranglarni olib tashlash
+                shareBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700'); // Yashil rang qo'shish
+
+                // Ikonka va matnni o'zgartirish
+                shareBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span>Nusxalandi!</span>
+                `;
+
+                // 2 sekunddan keyin QORA rangga qaytarish
+                setTimeout(() => {
+                    shareBtn.innerHTML = originalHTML;
+
+                    // Yashil ranglarni olib tashlaymiz
+                    shareBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+
+                    // MUHIM: QORA (asl) ranglarni qaytarib qo'shamiz
+                    shareBtn.classList.add('bg-gray-900', 'text-white', 'hover:bg-gray-700');
+
+                    lucide.createIcons();
+                }, 2000);
+
+            } catch (err) {
+                console.error('Error sharing:', err);
+            }
+        });
+    }
+</script>
+{% endblock %}

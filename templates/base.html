@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shohjahon Abdurahimov - Yurist Advokat{% endblock %}</title>
+
+    <!-- 1. TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <!-- 2. DARK MODE + RANGLAR CONFIG -->
+    <script>
+      // Sahifa yuklanishidan oldin temani aniqlash
+      if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+      } else {
+          document.documentElement.classList.remove('dark');
+      }
+
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: "hsl(var(--background))",
+              foreground: "hsl(var(--foreground))",
+              primary: "hsl(var(--primary))",
+              "primary-foreground": "hsl(var(--primary-foreground))",
+              accent: "hsl(var(--accent))",
+              "accent-foreground": "hsl(var(--accent-foreground))",
+              muted: "hsl(var(--muted))",
+              "muted-foreground": "hsl(var(--muted-foreground))",
+              border: "hsl(var(--border))",
+              card: "hsl(var(--card))",
+            },
+            fontFamily: {
+              heading: ['Playfair Display', 'serif'],
+              body: ['Inter', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Fontlar & Iconlar -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Animatsiya -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CSS Variables -->
+    <style>
+        :root {
+            /* LIGHT MODE */
+            --background: 0 0% 100%;
+            --foreground: 222 47% 11%;
+            --primary: 222 47% 11%;
+            --primary-foreground: 210 40% 98%;
+            --accent: 43 96% 64%;
+            --accent-foreground: 222 47% 11%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --card: 0 0% 100%;
+            --border: 214.3 31.8% 91.4%;
+        }
+
+        /* DARK MODE */
+        .dark {
+            --background: 222 47% 11%;
+            --foreground: 210 40% 98%;
+            --primary: 210 40% 98%;
+            --primary-foreground: 222 47% 11%;
+            --accent: 43 96% 64%;
+            --accent-foreground: 222 47% 11%;
+            --muted: 217 33% 17%;
+            --muted-foreground: 215 20% 65%;
+            --card: 217 33% 17%;
+            --border: 217 33% 20%;
+        }
+
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- MESSAGE TOASTER -->
+    {% if messages %}
+    <div id="toast-container" class="fixed top-24 right-5 z-[9999] flex flex-col gap-2">
+        {% for message in messages %}
+            <div class="toast-message flex items-center w-full max-w-xs p-4 space-x-3 text-gray-500 bg-white rounded-lg shadow-lg border-l-4 {% if message.tags == 'success' %}border-green-500{% elif message.tags == 'error' %}border-red-500{% endif %}" role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg {% if message.tags == 'success' %}text-green-500 bg-green-100{% elif message.tags == 'error' %}text-red-500 bg-red-100{% endif %}">
+                    {% if message.tags == 'success' %}
+                        <i data-lucide="check" class="w-5 h-5"></i>
+                    {% else %}
+                        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                    {% endif %}
+                </div>
+                <div class="text-sm font-normal text-gray-800">{{ message }}</div>
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(function() {
+            const toasts = document.getElementById('toast-container');
+            if (toasts) {
+                toasts.style.transition = 'opacity 0.5s ease';
+                toasts.style.opacity = '0';
+                setTimeout(() => toasts.remove(), 500);
+            }
+        }, 4000);
+    </script>
+    {% endif %}
+
+    <!-- 1. HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-background/90 backdrop-blur-md border-b border-border shadow-sm">
+        <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+            <div class="flex items-center justify-between h-20">
+
+                <!-- Logo -->
+                <a href="/" class="group flex items-center gap-3">
+                    <div class="w-12 h-12 bg-primary rounded-sm flex items-center justify-center transition-transform group-hover:scale-105">
+                        <span class="text-primary-foreground text-xl font-bold font-serif">SA</span>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="text-foreground tracking-tight font-serif font-medium text-lg">Shohjahon Abdurahimov</div>
+                        <div class="text-xs text-muted-foreground tracking-wider uppercase">Yurist Advokat</div>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden lg:flex items-center gap-8 font-medium">
+                    <a href="/#about" class="text-foreground/80 hover:text-accent transition-colors">Haqida</a>
+                    <a href="/#practice-areas" class="text-foreground/80 hover:text-accent transition-colors">Amaliyot</a>
+                    <a href="{% url 'blog_list' %}" class="text-foreground/80 hover:text-accent transition-colors">Blog</a>
+                    <a href="/#case-studies" class="text-foreground/80 hover:text-accent transition-colors">Ishlar</a>
+                    <a href="/#contact" class="text-foreground/80 hover:text-accent transition-colors">Aloqa</a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-4">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="p-2 rounded-md hover:bg-muted transition-colors text-foreground focus:outline-none">
+                        <i id="theme-toggle-light-icon" data-lucide="sun" class="w-5 h-5 hidden"></i>
+                        <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5 hidden"></i>
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="lg:hidden p-2 hover:bg-muted rounded-md transition-colors text-foreground">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⚠️ YANGI QO'SHILGAN: MOBILE MENU (HTML) -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-background border-t border-border absolute w-full left-0 top-20 shadow-lg">
+            <nav class="flex flex-col p-6 space-y-4">
+                <a href="/#about" class="text-foreground hover:text-accent font-medium py-2 border-b border-border/50">Haqida</a>
+                <a href="/#practice-areas" class="text-foreground hover:text-accent font-medium py-2 border-b border-border/50">Amaliyot</a>
+                <a href="{% url 'blog_list' %}" class="text-foreground hover:text-accent font-medium py-2 border-b border-border/50">Blog</a>
+                <a href="/#case-studies" class="text-foreground hover:text-accent font-medium py-2 border-b border-border/50">Ishlar</a>
+                <a href="/#contact" class="text-foreground hover:text-accent font-medium py-2">Aloqa</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. MAIN CONTENT -->
+    <main class="flex-grow pt-20"> <!-- Header balandligi uchun pt-20 qo'shildi -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 3. FOOTER -->
+    <footer class="bg-primary text-primary-foreground mt-auto">
+        <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12 py-12">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary-foreground text-primary rounded-sm flex items-center justify-center font-serif font-bold">SA</div>
+                    <div>
+                        <div class="font-serif text-lg">Shohjahon Abdurahimov</div>
+                        <div class="text-xs opacity-70 uppercase">Professional Yuridik Xizmat</div>
+                    </div>
+                </div>
+                <div class="text-sm opacity-60">
+                    © 2025 Barcha huquqlar himoyalangan.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SKRIPTLAR -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // 1. Ikonkalarni yaratish
+        lucide.createIcons();
+
+        // 2. Animatsiyani ishga tushirish
+        AOS.init({ once: true, offset: 50, duration: 800 });
+
+        // 3. ⚠️ YANGI QO'SHILGAN: MOBILE MENU LOGIKASI
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            // Link bosilganda menyuni yopish
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        }
+
+        // 4. DARK MODE LOGIKASI
+        var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        var themeToggleBtn = document.getElementById('theme-toggle');
+
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

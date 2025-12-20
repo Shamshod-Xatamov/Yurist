@@ -1,0 +1,556 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- 1. KERAKLI CSS O'ZGARUVCHILAR (React dizayni ishlashi uchun) -->
+<style>
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+        --accent: 35 92% 56%; /* Gold color */
+        --accent-foreground: 222.2 47.4% 11.2%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
+        --radius: 0.5rem;
+        --font-heading: 'Inter', sans-serif;
+    }
+
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+        /* Dark mode colors... */
+    }
+
+    /* Tailwind Variable Support */
+    .bg-background { background-color: hsl(var(--background)); }
+    .text-foreground { color: hsl(var(--foreground)); }
+    .bg-card { background-color: hsl(var(--card)); }
+    .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+    .bg-accent { background-color: hsl(var(--accent)); }
+    .text-accent { color: hsl(var(--accent)); }
+    .bg-accent\/10 { background-color: hsl(var(--accent) / 0.1); }
+    .bg-primary { background-color: hsl(var(--primary)); }
+    .text-primary-foreground { color: hsl(var(--primary-foreground)); }
+    .border-border { border-color: hsl(var(--border)); }
+
+    /* Marquee Animation */
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+        animation: marquee 30s linear infinite;
+        display: flex;
+        min-width: 200%;
+    }
+    html { scroll-behavior: smooth; }
+</style>
+
+
+<!-- HERO SECTION -->
+<section id="hero" class="relative min-h-screen flex items-center overflow-hidden bg-background">
+    <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12 py-24 lg:py-32">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <!-- Left Content -->
+            <div class="space-y-8 pt-12">
+                <div class="space-y-4">
+                    <!-- Badge -->
+                    <div class="inline-block">
+                        <span class="px-4 py-2 bg-accent/10 text-accent rounded-full border border-accent/20 font-medium">
+                            {{ hero.badge|default:"YURIDIK XIZMATLAR" }}
+                        </span>
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="text-5xl lg:text-6xl xl:text-7xl text-foreground tracking-tight font-bold leading-tight" style="font-family: var(--font-heading)">
+                        {{ hero.title|default:"Professional Yuridik Yordam" }}
+                    </h1>
+
+                    <!-- Description -->
+                    <p class="text-xl text-muted-foreground max-w-xl leading-relaxed">
+                        {{ hero.description|default:"Biz sizning huquqlaringizni himoya qilamiz." }}
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap gap-4">
+                    <a href="#contact" class="inline-flex items-center justify-center rounded-md transition-colors font-medium h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 text-lg">
+                        {{ hero.button_text|default:"Bog'lanish" }}
+                    </a>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="pt-8 border-t border-border mt-8">
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="award" class="w-5 h-5 text-accent"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-muted-foreground font-semibold">{{ hero.stat_1_label }}</div>
+                                <div class="text-xs text-muted-foreground/70">{{ hero.stat_1_sublabel }}</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="scale" class="w-5 h-5 text-accent"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-muted-foreground font-semibold">{{ hero.stat_2_label }}</div>
+                                <div class="text-xs text-muted-foreground/70">{{ hero.stat_2_sublabel }}</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-accent"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-muted-foreground font-semibold">{{ hero.stat_3_label }}</div>
+                                <div class="text-xs text-muted-foreground/70">{{ hero.stat_3_sublabel }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Image -->
+            <div class="relative mt-8 lg:mt-0">
+                <div class="relative overflow-hidden rounded-[2.5rem] aspect-square w-full  bg-muted">
+                    {% if hero.image %}
+                        <img src="{{ hero.image.url }}" alt="Hero Image" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&h=1000&fit=crop" class="w-full h-full object-cover object-top">
+                    {% endif %}
+                    <!-- Bottom gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="about" class="py-16 lg:py-24 bg-muted/30">
+    <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Left Content -->
+            <div class="space-y-6">
+                <div class="space-y-4">
+                    <span class="text-accent tracking-wider uppercase font-semibold text-sm">{{ about.badge }}</span>
+                    <h2 class="text-4xl lg:text-5xl text-foreground font-bold" style="font-family: var(--font-heading)">
+                        {{ about.title }}
+                    </h2>
+                </div>
+
+                <div class="space-y-4 text-muted-foreground leading-relaxed text-lg">
+                    {{ about.content|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Right Stats Grid -->
+            <div class="grid grid-cols-2 gap-6">
+                <!-- Stat 1 -->
+                <div class="space-y-4 p-6 bg-background rounded-2xl border border-border shadow-sm hover:border-accent/50 transition-colors">
+                    <i data-lucide="briefcase" class="h-8 w-8 text-primary"></i>
+                    <div class="space-y-1">
+                        <div class="text-3xl lg:text-4xl text-foreground font-bold" style="font-family: var(--font-heading)">{{ about.experience_value }}</div>
+                        <div class="text-sm text-muted-foreground">{{ about.experience_label }}</div>
+                    </div>
+                </div>
+                <!-- Stat 2 -->
+                <div class="space-y-4 p-6 bg-background rounded-lg border border-border shadow-sm hover:border-accent/50 transition-colors">
+                    <i data-lucide="scale" class="h-8 w-8 text-primary"></i>
+                    <div class="space-y-1">
+                        <div class="text-3xl lg:text-4xl text-foreground font-bold" style="font-family: var(--font-heading)">{{ about.cases_value }}</div>
+                        <div class="text-sm text-muted-foreground">{{ about.cases_label }}</div>
+                    </div>
+                </div>
+                <!-- Stat 3 -->
+                <div class="space-y-4 p-6 bg-background rounded-lg border border-border shadow-sm hover:border-accent/50 transition-colors">
+                    <i data-lucide="users" class="h-8 w-8 text-primary"></i>
+                    <div class="space-y-1">
+                        <div class="text-3xl lg:text-4xl text-foreground font-bold" style="font-family: var(--font-heading)">{{ about.clients_value }}</div>
+                        <div class="text-sm text-muted-foreground">{{ about.clients_label }}</div>
+                    </div>
+                </div>
+                <!-- Stat 4 -->
+                <div class="space-y-4 p-6 bg-background rounded-lg border border-border shadow-sm hover:border-accent/50 transition-colors">
+                    <i data-lucide="graduation-cap" class="h-8 w-8 text-primary"></i>
+                    <div class="space-y-1">
+                        <div class="text-3xl lg:text-4xl text-foreground font-bold" style="font-family: var(--font-heading)">{{ about.awards_value }}</div>
+                        <div class="text-sm text-muted-foreground">{{ about.awards_label }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUSTED BY (Marquee) -->
+<section class="py-16 bg-background border-y border-border/50">
+    <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+        <div class="text-center mb-12">
+            <span class="text-sm tracking-[0.2em] uppercase text-accent font-semibold">
+                Ishonch Bildirgan Kompaniyalar
+            </span>
+        </div>
+
+        <div class="relative overflow-hidden">
+             <!-- Gradient Overlays for smooth fade -->
+             <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background to-transparent z-10"></div>
+             <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background to-transparent z-10"></div>
+
+            <div class="flex animate-marquee">
+                <!-- Logolar guruhi (Infinite scroll uchun 2 marta yozilgan) -->
+                {% for i in "12"|make_list %}
+                <div class="flex gap-16 items-center flex-shrink-0 mx-8 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+                    <svg viewBox="0 0 120 40" class="h-12 w-auto"><path d="M20 8h80v4H20z" fill="#C9A961"/><path d="M15 16h5v16h-5zM30 16h5v16h-5zM45 16h5v16h-5zM60 16h5v16h-5zM75 16h5v16h-5zM90 16h5v16h-5zM105 16h5v16h-5z" fill="#0A192F"/><path d="M10 32h100v4H10z" fill="#C9A961"/></svg>
+                    <svg viewBox="0 0 120 40" class="h-12 w-auto"><circle cx="20" cy="20" r="8" fill="#C9A961"/><circle cx="40" cy="20" r="8" fill="#2D3748"/><circle cx="60" cy="20" r="8" fill="#C9A961"/><circle cx="80" cy="20" r="8" fill="#2D3748"/><path d="M20 20h60M28 20l-4-6M32 20l-4 6M48 20l-4-6M52 20l-4 6M68 20l-4-6M72 20l-4 6" stroke-width="2" stroke="#0A192F" fill="none"/></svg>
+                    <svg viewBox="0 0 120 40" class="h-12 w-auto"><path d="M20 30V10l15-5 15 5v20" fill="#0A192F"/><path d="M50 15h5v15h-5z" fill="#B8935C"/><path d="M35 20h5v10h-5z" fill="#C9A961"/><path d="M20 25h5v5h-5z" fill="#B8935C"/><path d="M65 12h30v18H65z" fill="#2D3748"/><rect x="70" y="17" width="5" height="8" fill="#C9A961"/><rect x="80" y="17" width="5" height="8" fill="#C9A961"/></svg>
+                    <svg viewBox="0 0 120 40" class="h-12 w-auto"><rect x="15" y="25" width="20" height="3" fill="#C9A961"/><rect x="15" y="18" width="15" height="3" fill="#0A192F"/><rect x="15" y="11" width="25" height="3" fill="#B8935C"/><circle cx="50" cy="20" r="10" fill="none" stroke="#C9A961" stroke-width="3"/><path d="M50 12v16M42 20h16" stroke="#0A192F" stroke-width="2"/><rect x="70" y="10" width="8" height="20" fill="#2D3748"/><rect x="82" y="15" width="8" height="15" fill="#C9A961"/><rect x="94" y="18" width="8" height="12" fill="#B8935C"/></svg>
+                    <svg viewBox="0 0 120 40" class="h-12 w-auto"><path d="M30 8h60L85 32H35L30 8z" fill="#C9A961"/><rect x="45" y="15" width="30" height="3" fill="#0A192F"/><rect x="42" y="20" width="36" height="2" fill="#0A192F"/><rect x="40" y="24" width="40" height="2" fill="#0A192F"/><rect x="35" y="32" width="50" height="3" fill="#2D3748"/></svg>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRACTICE AREAS -->
+<section id="practice-areas" class="py-24 lg:py-32 bg-background">
+    <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+        <div class="text-center space-y-4 mb-16">
+            <span class="text-accent tracking-wider uppercase font-semibold text-sm">Xizmatlar</span>
+            <h2 class="text-4xl lg:text-5xl text-foreground font-bold max-w-3xl mx-auto" style="font-family: var(--font-heading)">
+                Amaliyot Sohalari
+            </h2>
+            <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Mijozlarimiz uchun eng muhim bo'lgan sohalarda chuqur ekspertiza.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for service in services %}
+            <div class="group bg-card p-8 rounded-2xl border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-xl h-full">
+                <div class="space-y-6">
+                    <div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                        <!-- Icon mapping -->
+                        <i data-lucide="{{ service.icon|lower|default:'briefcase' }}" class="w-7 h-7 text-accent"></i>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl text-foreground mb-3 font-bold" style="font-family: var(--font-heading)">
+                            {{ service.title }}
+                        </h3>
+                        <p class="text-muted-foreground mb-4">
+                            {{ service.description|truncatewords:20 }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 pt-4 border-t border-border">
+                        {% for spec in service.specialties.split %}
+                        <span class="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm">
+                            {{ spec }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+             <div class="col-span-3 text-center py-10 text-muted-foreground">Xizmatlar topilmadi.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section id="case-studies" class="py-24 lg:py-32 bg-muted/30">
+    <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+
+        <!-- Cases Grid -->
+        <div class="mb-24">
+            <div class="text-center space-y-4 mb-16">
+                <span class="text-accent tracking-wider uppercase font-semibold text-sm">Portfolio</span>
+                <h2 class="text-4xl lg:text-5xl text-foreground font-bold max-w-3xl mx-auto" style="font-family: var(--font-heading)">
+                    Muvaffaqiyatli Keyslar
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for case in cases %}
+                <div class="bg-card p-8 rounded-2xl border border-border hover:border-accent/50 transition-all duration-300 hover:shadow-xl group h-full">
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">
+                                {{ case.category }}
+                            </span>
+                            <span class="text-sm text-muted-foreground">{{ case.year }}</span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-2xl text-foreground mb-3 font-bold" style="font-family: var(--font-heading)">
+                                {{ case.title }}
+                            </h3>
+                            <p class="text-muted-foreground">
+                                {{ case.description|truncatechars:100 }}
+                            </p>
+                        </div>
+
+                        <div class="pt-4 border-t border-border">
+                            <span class="text-foreground font-medium flex items-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4 text-green-500"></i>
+                                {{ case.outcome }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-3 text-center py-10 text-muted-foreground">Keyslar topilmadi.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div>
+            <div class="text-center space-y-4 mb-16">
+                <span class="text-accent tracking-wider uppercase font-semibold text-sm">Mijozlar Fikri</span>
+                <h2 class="text-4xl lg:text-5xl text-foreground font-bold max-w-3xl mx-auto" style="font-family: var(--font-heading)">
+                    Biz Haqimizda
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for testimonial in testimonials %}
+                <div class="bg-card p-8 rounded-2xl border border-border h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-accent/30">
+                    <div class="space-y-6">
+                        <i data-lucide="quote" class="w-10 h-10 text-accent/30"></i>
+
+                        <p class="text-muted-foreground italic leading-relaxed">
+                            "{{ testimonial.quote }}"
+                        </p>
+
+                        <div class="flex items-center gap-4 pt-4 border-t border-border">
+                            <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                                <span class="text-accent font-bold" style="font-family: var(--font-heading)">
+                                    {{ testimonial.author|slice:":1" }}
+                                </span>
+                            </div>
+                            <div>
+                                <div class="text-foreground font-bold">{{ testimonial.author }}</div>
+                                <div class="text-sm text-muted-foreground">{{ testimonial.role }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-3 text-center py-10 text-muted-foreground">Fikrlar yo'q.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section id="contact" class="py-24 lg:py-32 bg-background">
+    <div class="w-full max-w-[1280px] mx-auto px-6 lg:px-12">
+        <!-- Section Header -->
+        <div class="text-center space-y-4 mb-12">
+            <span class="text-accent tracking-wider uppercase font-semibold text-sm">{{ contact.badge|default:"ALOQA" }}</span>
+            <h2 class="text-4xl lg:text-5xl text-foreground font-bold max-w-3xl mx-auto" style="font-family: var(--font-heading)">
+                {{ contact.title|default:"Bepul Konsultatsiya" }}
+            </h2>
+            <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+                {{ contact.subtitle|default:"Yuridik masalalaringizni muhokama qilish uchun biz bilan bog'laning." }}
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+
+            <!-- LEFT COLUMN: Contact Info List -->
+            <div class="space-y-6">
+                <div class="space-y-4">
+
+                    <!-- 1. PHONE -->
+                    <a href="tel:+998901234567" class="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border hover:border-accent/50 transition-all duration-300 group">
+                        <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-accent/20 transition-colors">
+                            <i data-lucide="phone" class="w-6 h-6 text-accent"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs text-muted-foreground mb-1">Telefon Raqam</div>
+                            <div class="text-sm text-foreground font-medium">+998 90 123 45 67</div>
+                        </div>
+                    </a>
+
+                    <!-- 2. TELEGRAM (Custom SVG Icon) -->
+                    <a href="https://t.me/advokat_user" target="_blank" class="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border hover:border-blue-400/50 transition-all duration-300 group">
+                        <div class="w-12 h-12 bg-blue-400/10 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-blue-400/20 transition-colors">
+                            <!-- Telegram Original Icon SVG -->
+                            <svg class="w-6 h-6 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.121.099.154.232.17.326.016.093.036.307.02.473z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs text-muted-foreground mb-1">Telegram</div>
+                            <div class="text-sm text-foreground font-medium">@advokat_user</div>
+                        </div>
+                    </a>
+
+                    <!-- 3. WHATSAPP (Custom SVG Icon) -->
+                    <a href="#" class="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border hover:border-green-500/50 transition-all duration-300 group">
+                        <div class="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-green-500/20 transition-colors">
+                            <!-- WhatsApp Original Icon SVG -->
+                            <svg class="w-6 h-6 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs text-muted-foreground mb-1">WhatsApp</div>
+                            <div class="text-sm text-foreground font-medium">+998 90 123 45 67</div>
+                        </div>
+                    </a>
+
+                    <!-- 4. LINKEDIN (Custom SVG Icon) -->
+                    <a href="#" class="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border hover:border-blue-700/50 transition-all duration-300 group">
+                        <div class="w-12 h-12 bg-blue-700/10 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-blue-700/20 transition-colors">
+                            <!-- LinkedIn Original Icon SVG -->
+                            <svg class="w-6 h-6 text-[#0A66C2]" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs text-muted-foreground mb-1">LinkedIn</div>
+                            <div class="text-sm text-foreground font-medium">Shohjahon Abdurahimov</div>
+                        </div>
+                    </a>
+
+                    <!-- 5. OFFICE ADDRESS -->
+                    <div class="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border shadow-sm">
+                        <div class="w-12 h-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="map-pin" class="w-6 h-6 text-muted-foreground"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-xs text-muted-foreground mb-1">Manzil</div>
+                            <div class="text-sm text-foreground font-medium break-words">Toshkent sh, Chilonzor tumani</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Office Hours -->
+                <div class="p-4 bg-muted/50 rounded-2xl border border-border mt-6">
+                    <h3 class="text-foreground mb-3 font-bold" style="font-family: var(--font-heading)">
+                        Ish Vaqtlari
+                    </h3>
+                    <div class="space-y-2 text-sm text-muted-foreground">
+                        <div class="flex justify-between">
+                            <span>{{ contact.work_days|default:"Dushanba - Juma" }}</span>
+                            <span>{{ contact.work_hours|default:"09:00 - 18:00" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>{{ contact.saturday_text|default:"Shanba" }}</span>
+                            <span>{{ contact.saturday_hours|default:"10:00 - 14:00" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>{{ contact.sunday_text|default:"Yakshanba" }}</span>
+                            <span class="text-destructive font-medium">{{ contact.sunday_hours|default:"Yopiq" }}</span>
+                        </div>
+                    </div>
+                </div>
+                 <!-- 6. GOOGLE MAP (XARITA) - NEW -->
+                <div class="rounded-2xl overflow-hidden border border-border shadow-sm">
+                    <iframe
+                        src="{{ contact.map_url|default:'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.368383412586!2d69.2413203157256!3d41.32179897927011!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8b5a03496033%3A0x6b445558d7c4938!2sTashkent%20City!5e0!3m2!1sen!2s!4v1645000000000!5m2!1sen!2s' }}"
+                        width="100%"
+                        height="250"
+                        style="border: 0"
+                        allowFullScreen=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title="Office Location"
+                        class="w-full grayscale hover:grayscale-0 transition-all duration-500"
+                    ></iframe>
+                </div>
+            </div>
+
+
+            <!-- RIGHT COLUMN: Form -->
+            <div>
+                <form class="bg-card p-5 rounded-2xl border border-border space-y-5 shadow-sm">
+                    <div class="grid gap-5">
+                        <div class="space-y-2">
+                            <label class="text-sm text-foreground font-medium">To'liq Ismingiz *</label>
+                            <input type="text" placeholder="Ism Familiya" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm text-foreground font-medium">Email Manzil *</label>
+                            <input type="email" placeholder="email@example.com" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
+                        </div>
+                    </div>
+
+                    <div class="grid gap-5">
+                        <div class="space-y-2">
+                            <label class="text-sm text-foreground font-medium">Telefon Raqam</label>
+                            <input type="tel" placeholder="+998 (90) 123-4567" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm text-foreground font-medium">Mavzu *</label>
+                            <input type="text" placeholder="Yuridik Maslahat" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm text-foreground font-medium">Xabar *</label>
+                        <textarea rows="5" placeholder="Iltimos, vaziyatingizni qisqacha tushuntiring..." class="flex min-h-[80px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none"></textarea>
+                    </div>
+
+                    <button type="button" class="inline-flex items-center justify-center rounded-xl transition-colors font-medium h-12 px-8 w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                        Xabarni Yuborish
+                        <i data-lucide="send" class="ml-2 w-4 h-4"></i>
+                    </button>
+
+                    <p class="text-xs text-muted-foreground text-center">
+                        * Barcha murojaatlar maxfiy saqlanadi. 24 soat ichida javob beramiz.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- SCRIPTS -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    // Scroll Effect Logic (React'dagi useEffect o'rniga)
+    const header = document.getElementById('main-header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+            header.classList.add('bg-background/95', 'backdrop-blur-md', 'border-b', 'border-border', 'shadow-sm');
+            header.classList.remove('bg-transparent');
+        } else {
+            header.classList.remove('bg-background/95', 'backdrop-blur-md', 'border-b', 'border-border', 'shadow-sm');
+            header.classList.add('bg-transparent');
+        }
+    });
+</script>
+
+{% endblock %}
