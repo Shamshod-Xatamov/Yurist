@@ -1,18 +1,13 @@
-"""
-WSGI config for config project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
-"""
-
 import os
-
 from django.core.wsgi import get_wsgi_application
+from whitenoise import WhiteNoise # <--- Buni qo'shdik
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 application = get_wsgi_application()
 
-app = application # Vercel 'app' nomini qidiradi
+# Mana shu qator hamma CSS/JS ni "qo'lidan ushlab" brauzerga ko'rsatadi
+application = WhiteNoise(application, root=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'staticfiles'))
+application.add_files(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'staticfiles'), prefix='static/')
+
+app = application # Vercel uchun

@@ -193,9 +193,8 @@ CKEDITOR_5_CONFIGS = {
 
 
 
-# 1. BIZNING FAQSAT QO'SHGAN STATIK FAYLLARIMIZ (CSS, Images)
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 
@@ -303,3 +302,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # Media (Rasmlar) Cloudinary ga ketadi
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
+
+WHITENOISE_USE_FINDERS = True
