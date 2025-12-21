@@ -21,7 +21,7 @@ from django.shortcuts import redirect
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-admin_url = os.getenv('ADMIN_URL', 'admin/').strip('/') # Slashlarni olib tashlaydi
+admin_url = os.getenv('ADMIN_URL', 'admin').strip().strip('/')
 urlpatterns = [
     path(f'{admin_url}/', admin.site.urls),
     path('admin/', lambda request: redirect('/')),
