@@ -488,43 +488,46 @@
 
 
             <!-- RIGHT COLUMN: Form -->
+            <!-- Contact Form (Single Column) -->
             <div>
-                <form class="bg-card p-5 rounded-2xl border border-border space-y-5 shadow-sm">
-                    <div class="grid gap-5">
-                        <div class="space-y-2">
-                            <label class="text-sm text-foreground font-medium">To'liq Ismingiz *</label>
-                            <input type="text" placeholder="Ism Familiya" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
-                        </div>
+                <form method="post" action="#contact" class="bg-white p-6 rounded-2xl border border-gray-200 space-y-5 shadow-sm">
+                    {% csrf_token %}
 
-                        <div class="space-y-2">
-                            <label class="text-sm text-foreground font-medium">Email Manzil *</label>
-                            <input type="email" placeholder="email@example.com" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
-                        </div>
-                    </div>
-
-                    <div class="grid gap-5">
-                        <div class="space-y-2">
-                            <label class="text-sm text-foreground font-medium">Telefon Raqam</label>
-                            <input type="tel" placeholder="+998 (90) 123-4567" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-sm text-foreground font-medium">Mavzu *</label>
-                            <input type="text" placeholder="Yuridik Maslahat" class="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
-                        </div>
-                    </div>
-
+                    <!-- 1. Ism -->
                     <div class="space-y-2">
-                        <label class="text-sm text-foreground font-medium">Xabar *</label>
-                        <textarea rows="5" placeholder="Iltimos, vaziyatingizni qisqacha tushuntiring..." class="flex min-h-[80px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none"></textarea>
+                        <label class="text-sm text-gray-900 font-medium">To'liq Ismingiz *</label>
+                        <input type="text" name="name" placeholder="Ism Familiya" required
+                               class="flex h-11 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent transition-all">
                     </div>
 
-                    <button type="button" class="inline-flex items-center justify-center rounded-xl transition-colors font-medium h-12 px-8 w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                    <!-- 2. Telefon -->
+                    <div class="space-y-2">
+                        <label class="text-sm text-gray-900 font-medium">Telefon Raqam *</label>
+                        <input type="tel" name="phone" placeholder="+998 (90) 123-4567" required
+                               class="flex h-11 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent transition-all">
+                    </div>
+
+                    <!-- 3. Mavzu -->
+                    <div class="space-y-2">
+                        <label class="text-sm text-gray-900 font-medium">Mavzu *</label>
+                        <input type="text" name="subject" placeholder="Yuridik Maslahat" required
+                               class="flex h-11 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent transition-all">
+                    </div>
+
+                    <!-- 4. Xabar -->
+                    <div class="space-y-2">
+                        <label class="text-sm text-gray-900 font-medium">Xabar *</label>
+                        <textarea name="message" rows="5" placeholder="Iltimos, vaziyatingizni qisqacha tushuntiring..." required
+                                  class="flex min-h-[100px] w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent resize-none transition-all"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl transition-colors font-bold h-12 px-8 w-full bg-yellow-600 text-white hover:bg-yellow-700 shadow-md transform hover:-translate-y-0.5">
                         Xabarni Yuborish
                         <i data-lucide="send" class="ml-2 w-4 h-4"></i>
                     </button>
 
-                    <p class="text-xs text-muted-foreground text-center">
+                    <p class="text-xs text-gray-500 text-center">
                         * Barcha murojaatlar maxfiy saqlanadi. 24 soat ichida javob beramiz.
                     </p>
                 </form>

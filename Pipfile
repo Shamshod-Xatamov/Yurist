@@ -9,6 +9,12 @@ django-unfold = "*"
 pillow = "*"
 django-ckeditor-5 = "*"
 python-dotenv = "*"
+requests = "*"
+dj-database-url = "*"
+django-cloudinary-storage = "*"
+cloudinary = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
 
 [dev-packages]
 

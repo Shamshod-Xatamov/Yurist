@@ -1,6 +1,10 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render
-
+import requests
+import threading  # Sayt qotib qolmasligi uchun
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
 from dashboard.views import is_admin
 from .models import (
     HeroSection, AboutSection, PracticeArea,
@@ -8,7 +12,54 @@ from .models import (
 )
 
 
+def send_telegram(name, phone,subject, message):
+    token = settings.TELEGRAM_BOT_TOKEN
+    chat_id = settings.TELEGRAM_CHAT_ID
+
+    if not token or not chat_id:
+        return  # Agar sozlamalar yo'q bo'lsa, hech narsa qilma
+
+    # Xabar matnini chiroyli qilish (HTML formatda)
+    text = (
+        f"🔔 <b>YANGI MUROJAAT</b>\n\n"
+        f"👤 <b>Ism:</b> {name}\n"
+        f"📞 <b>Tel:</b> {phone}\n"
+        f"📌 <b>Mavzu:</b> {subject}\n\n"
+        f"📝 <b>Xabar:</b>\n{message}"
+    )
+
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    data = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML"
+    }
+
+    try:
+        requests.post(url, data=data)
+    except Exception as e:
+        print(f"Telegramga yuborishda xatolik: {e}")
+
+
 def home(request):
+    if request.method == "POST":
+        # Formadan ma'lumotlarni olish
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        subject = request.POST.get('subject')
+        user_message = request.POST.get('message')
+
+        # Telegramga yuborish (fon rejimida - sayt tez ishlashi uchun)
+        if name and phone:
+            threading.Thread(target=send_telegram, args=(name, phone, subject,user_message)).start()
+
+            # Saytda yashil xabar chiqarish
+            messages.success(request, "So'rovingiz qabul qilindi! Tez orada aloqaga chiqamiz.", extra_tags='frontend')
+        else:
+            messages.error(request, "Iltimos, ma'lumotlarni to'liq kiriting.", extra_tags='frontend')
+
+        # O'sha joyga (Contact section) qaytarish
+        return redirect('/#contact')
     # Singleton modellardan ma'lumot olamiz (birinchisini)
     hero = HeroSection.objects.first()
     about = AboutSection.objects.first()

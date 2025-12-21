@@ -125,13 +125,26 @@
             <div class="flex items-center justify-between h-20">
 
                 <!-- Logo -->
-                <a href="/" class="group flex items-center gap-3">
-                    <div class="w-12 h-12 bg-primary rounded-sm flex items-center justify-center transition-transform group-hover:scale-105">
-                        <span class="text-primary-foreground text-xl font-bold font-serif">SA</span>
+                <!-- Logo -->
+                <a href="/" class="group flex items-center gap-2 md:gap-3">
+                    <!-- Logo Icon (Mobilda kichikroq w-10, Desktopda w-12) -->
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-sm flex items-center justify-center transition-transform group-hover:scale-105 flex-shrink-0">
+                        <span class="text-primary-foreground text-lg md:text-xl font-bold font-serif">SA</span>
                     </div>
-                    <div class="hidden md:block">
-                        <div class="text-foreground tracking-tight font-serif font-medium text-lg">Shohjahon Abdurahimov</div>
-                        <div class="text-xs text-muted-foreground tracking-wider uppercase">Yurist Advokat</div>
+
+                    <!-- Text qismi (HAMMA JOYDA KO'RINADI) -->
+                    <div class="flex flex-col justify-center">
+                        <!-- Ism: Mobilda text-sm (kichikroq), Desktopda text-lg (katta) -->
+                        <!-- Font-serif va font-medium saqlandi -->
+                        <div class="text-foreground tracking-tight font-serif font-medium text-sm md:text-lg leading-tight">
+                            Shohjahon Abdurahimov
+                        </div>
+
+                        <!-- Subtitle: Mobilda 10px, Desktopda text-xs -->
+                        <!-- Uppercase va tracking saqlandi -->
+                        <div class="text-[10px] md:text-xs text-muted-foreground tracking-wider uppercase">
+                            Yurist Advokat
+                        </div>
                     </div>
                 </a>
 

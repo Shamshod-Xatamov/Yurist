@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+
+import dj_database_url
 from django.templatetags.static import static
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +39,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "unfold",
+    'cloudinary_storage',
     "unfold.contrib.filters",
     "unfold.contrib.forms",
     'django.contrib.admin',
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
     'django_ckeditor_5',
     "home",
     'blog',
@@ -85,13 +89,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600
+    )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -177,19 +186,14 @@ CKEDITOR_5_CONFIGS = {
 
 # ...
 
-STATIC_URL = 'static/'
+
 
 # 1. BIZNING FAQSAT QO'SHGAN STATIK FAYLLARIMIZ (CSS, Images)
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# 2. ENG MUHIMI: COMMAND ORQALI YIG'ILADIGAN JOY (Mana shu yetishmayotgan edi!)
-# Django "collectstatic" qilganda hamma narsani shu papkaga tashlaydi
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Media fayllar (User yuklagan rasmlar)
-MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # config/settings.py eng pastida:
@@ -275,3 +279,23 @@ UNFOLD = {
         ],
     },
 }
+
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+
+# Cloudinary Sozlamalari
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Vercel uchun eng muhim sozlama
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+
+# Media (Rasmlar) Cloudinary ga ketadi
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'
