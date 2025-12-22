@@ -156,7 +156,7 @@ USE_TZ = True
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': ['heading', '|', 'bold', 'italic', 'link',
-                    'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', 'insertTable', 'mediaEmbed', 'undo', 'redo'],
+                    'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', ],
         'theme': 'default',
     },
     'extends': {
@@ -167,23 +167,21 @@ CKEDITOR_5_CONFIGS = {
             '|',
             'blockQuote', 'imageUpload'
         ],
-        'toolbar': ['heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
-                    'code','subscript', 'superscript', 'highlight', '|', 'insertImage',
-                    'bulletedList', 'numberedList', 'todoList', '|',  'blockQuote', 'imageUpload', '|',
-                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'mediaEmbed', 'removeFormat',
-                    'insertTable',],
+        'toolbar': [
+            'heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
+            'code', 'subscript', 'superscript', 'highlight', '|', 'insertImage',
+            'bulletedList', 'numberedList', 'todoList', '|', 'blockQuote', 'imageUpload', '|',
+            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'mediaEmbed', 'removeFormat',
+            'insertTable', 'sourceEditing',
+        ],
         'image': {
-            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  '|'],
+            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side', '|'],
             'styles': [
-                'full',
-                'side',
-                'alignLeft',
-                'alignRight',
-                'alignCenter',
+                'full', 'side', 'alignLeft', 'alignRight', 'alignCenter',
             ]
         },
         'table': {
-            'contentToolbar': [ 'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties' ],
+            'contentToolbar': ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties'],
         },
         'heading': {
             'options': [
@@ -193,8 +191,20 @@ CKEDITOR_5_CONFIGS = {
                 { 'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3' }
             ]
         },
+        # 👇 1. VIDEO UCHUN (PREVIEW)
         'mediaEmbed': {
             'previewsInData': True,
+        },
+        # 👇 2. XAVFSIZLIKNI OCHISH (Hamma teglarga ruxsat berish)
+        'htmlSupport': {
+            'allow': [
+                {
+                    'name': '/.*/',
+                    'attributes': True,
+                    'classes': True,
+                    'styles': True
+                }
+            ]
         }
     }
 }
