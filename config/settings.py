@@ -152,7 +152,6 @@ USE_TZ = True
 
 
 
-# CKEditor 5 Sozlamalari
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': ['heading', '|', 'bold', 'italic', 'link',
@@ -167,12 +166,15 @@ CKEDITOR_5_CONFIGS = {
             '|',
             'blockQuote', 'imageUpload'
         ],
+        # Toolbarda 'sourceEditing' va 'mediaEmbed' borligiga e'tibor ber
         'toolbar': [
             'heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
             'code', 'subscript', 'superscript', 'highlight', '|', 'insertImage',
             'bulletedList', 'numberedList', 'todoList', '|', 'blockQuote', 'imageUpload', '|',
             'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'mediaEmbed', 'removeFormat',
-            'insertTable', 'sourceEditing',
+            'insertTable',
+            '|', 'sourceEditing', 'maximize', # <--- MANA SHU TUGMALAR KERAK
+            '|', 'undo', 'redo'
         ],
         'image': {
             'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side', '|'],
@@ -191,11 +193,11 @@ CKEDITOR_5_CONFIGS = {
                 { 'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3' }
             ]
         },
-        # 👇 1. VIDEO UCHUN (PREVIEW)
+        # 1. Videoni iframe qilib saqlash uchun
         'mediaEmbed': {
             'previewsInData': True,
         },
-        # 👇 2. XAVFSIZLIKNI OCHISH (Hamma teglarga ruxsat berish)
+        # 2. Barcha HTML teglarga (iframe, script, div) ruxsat berish
         'htmlSupport': {
             'allow': [
                 {
@@ -208,11 +210,6 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
-
-# config/settings.py faylida:
-
-# ...
-
 
 
 STATICFILES_DIRS = [
