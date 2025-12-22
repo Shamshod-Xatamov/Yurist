@@ -38,7 +38,16 @@ ALLOWED_HOSTS = [
     '.vercel.app',  # Hamma vercel bilan tugaydigan linklarga ruxsat beradi
     'firmayurist.uz', # Sening .uz domening uchun
 ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://firmayurist.uz',
+    'https://www.firmayurist.uz',
+    'https://firmayurist.vercel.app',  # Vercel linkini ham qo'shib qo'y
+]
 
+# HTTPS sozlamalari (Vercel uchun muhim)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -311,3 +320,7 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
 
 WHITENOISE_USE_FINDERS = True
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600 # 2 hafta davomida eslab qoladi
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False # Brauzer yopilsa ham sessiya qoladi

@@ -114,10 +114,20 @@
             <div class="flex items-center justify-between pt-12 pb-12 border-t border-gray-200">
                 <div class="flex items-center gap-4">
                     <!-- LIKE BUTTON -->
-                    <button id="likeBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-gray-200 bg-white hover:bg-gray-50 h-10 px-4 py-2">
-                        <i data-lucide="heart" class="w-5 h-5 mr-2 text-gray-500"></i>
-                        <span id="likeCount">{{ post.likes }}</span>
-                    </button>
+                    <!-- Like tugmasi -->
+<button type="button"
+        onclick="toggleLike('{{ post.uuid }}')"
+        class="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+        id="like-btn">
+
+    <!-- SHARTLI KLASSLAR (QIZIL YOKI OQ) -->
+    <i id="heart-icon"
+       data-lucide="heart"
+       class="w-5 h-5 {% if is_liked %}fill-red-500 text-red-500{% else %}text-gray-500{% endif %}">
+    </i>
+
+    <span id="like-count" class="font-medium text-gray-700">{{ post.likes }}</span>
+</button>
 
                     <!-- COMMENT TOGGLE BUTTON -->
                     <button id="commentToggleBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-gray-200 bg-white hover:bg-gray-50 h-10 px-4 py-2">
@@ -218,30 +228,33 @@
         lucide.createIcons();
     });
 
-    // 2. LIKE BUTTON LOGIC
-    const likeBtn = document.getElementById('likeBtn');
-    const likeCount = document.getElementById('likeCount');
-    let isLiked = false;
+    async function toggleLike(postUuid) {
+    // 1. Backendga (Djangoga) so'rov yuboramiz
+    const response = await fetch(`/blog/like/${postUuid}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}', // Xavfsizlik uchun shart!
+            'Content-Type': 'application/json'
+        }
+    });
 
-    if (likeBtn) {
-        likeBtn.addEventListener('click', function() {
-            isLiked = !isLiked;
-            let count = parseInt(likeCount.innerText);
+    const data = await response.json();
 
-            // Ikonkani topamiz
-            const icon = likeBtn.querySelector('i') || likeBtn.querySelector('svg');
+    if (data.status) {
+        // 2. Ekranda sonni yangilaymiz
+        document.getElementById('like-count').innerText = data.likes;
 
-            if (isLiked) {
-                likeBtn.classList.add('liked-active', 'bg-red-50', 'border-red-100');
-                likeCount.innerText = count + 1;
-                likeCount.classList.add('text-red-600');
-            } else {
-                likeBtn.classList.remove('liked-active', 'bg-red-50', 'border-red-100');
-                likeCount.innerText = count - 1;
-                likeCount.classList.remove('text-red-600');
-            }
-        });
+        // 3. Ikonka rangini o'zgartiramiz
+       const heartIcon = document.getElementById('heart-icon');
+    if (data.status === 'liked') {
+        heartIcon.classList.add('fill-red-500', 'text-red-500');
+        heartIcon.classList.remove('text-gray-500');
+    } else {
+        heartIcon.classList.remove('fill-red-500', 'text-red-500');
+        heartIcon.classList.add('text-gray-500');
     }
+    }
+}
 
     // 3. COMMENT TOGGLE LOGIC
     const commentToggleBtn = document.getElementById('commentToggleBtn');

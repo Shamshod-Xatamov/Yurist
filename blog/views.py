@@ -50,36 +50,66 @@ def blog_list(request):
         'search_query': search_query,
     }
     return render(request, 'blog/index.html', context)
-def blog_detail(request, post_uuid):  # pk emas, post_uuid bo'lishi kerak
-    # Blog emas, BlogPost bo'lishi kerak. pk=pk emas, uuid=post_uuid bo'lishi kerak
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from .models import BlogPost, Comment
+
+
+def blog_detail(request, post_uuid):
     post = get_object_or_404(BlogPost, uuid=post_uuid)
 
-    # Ko'rishlar sonini oshirish (xohlasangiz qo'shing)
-    session_key = f"viewed_article_{post.uuid}"
-
-    # 1. Agar foydalanuvchi bu maqolani oldin ochmagan bo'lsa (sessionda yo'q bo'lsa)
-    if not request.session.get(session_key, False):
-
-        # 2. (Ixtiyoriy) Admin yoki o'zingiz kirsangiz sanamasligi uchun:
-        # Agar bu qatorni olib tashlasangiz, o'zingiznikini ham sanaydi
+    # --- VIEWS LOGIC (UNIQUE) ---
+    session_key_view = f"viewed_post_{post.uuid}"
+    if not request.session.get(session_key_view):
         if not request.user.is_staff:
             post.views += 1
-            post.save()
+            post.save(update_fields=['views'])
+            request.session[session_key_view] = True
 
-            # 3. Sessiyaga "o'qildi" deb yozib qo'yamiz
-            request.session[session_key] = True
+    # --- LIKE HOLATINI TEKSHIRISH (YANGI QISM) ---
+    # Bu postga ushbu foydalanuvchi like bosganmi?
+    session_key_like = f"liked_post_{post.uuid}"
+    is_liked = request.session.get(session_key_like, False)
 
+    # --- COMMENTS LOGIC ---
     if request.method == "POST":
         author_name = request.POST.get('author_name')
         content = request.POST.get('content')
-
         if author_name and content:
-            Comment.objects.create(
-                post=post,
-                author_name=author_name,
-                content=content
-            )
-            # Redirect qilganda ham post_uuid ni ishlatish kerak
+            Comment.objects.create(post=post, author_name=author_name, content=content)
             return redirect('blog_detail', post_uuid=post_uuid)
 
-    return render(request, 'blog/detail.html', {'post': post})
+    # Contextga 'is_liked' ni qo'shamiz
+    return render(request, 'blog/detail.html', {
+        'post': post,
+        'is_liked': is_liked
+    })
+
+
+# --- LIKES LOGIC (BAZAGA SAQLASH) ---
+def like_post(request, post_uuid):
+    if request.method == "POST":
+        post = get_object_or_404(BlogPost, uuid=post_uuid)
+        session_key = f"liked_post_{post.uuid}"
+
+        if not request.session.get(session_key):
+            # Like bosdi
+            post.likes += 1
+            post.save(update_fields=['likes'])
+            request.session[session_key] = True
+            return JsonResponse({'likes': post.likes, 'status': 'liked'})
+        else:
+            # Like qaytarib oldi
+            # HIMOYA: Agar like 0 dan katta bo'lsagina ayiramiz
+            if post.likes > 0:
+                post.likes -= 1
+            else:
+                post.likes = 0  # Har ehtimolga qarshi
+
+            post.save(update_fields=['likes'])
+            del request.session[session_key]
+            return JsonResponse({'likes': post.likes, 'status': 'unliked'})
+
+    return JsonResponse({'error': 'Xato so\'rov'}, status=400)
