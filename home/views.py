@@ -12,16 +12,16 @@ from .models import (
 )
 
 
-def send_telegram_message(name, phone, subject, message):
+def send_telegram(name, phone,subject, message):
     token = settings.TELEGRAM_BOT_TOKEN
     chat_id = settings.TELEGRAM_CHAT_ID
 
     if not token or not chat_id:
-        print("❌ TELEGRAM TOKEN YOKI ID TOPILMADI!")  # Log uchun
-        return
+        return  # Agar sozlamalar yo'q bo'lsa, hech narsa qilma
 
+    # Xabar matnini chiroyli qilish (HTML formatda)
     text = (
-        f"🔔 <b>YANGI MUROJAAT (Vercel)</b>\n\n"
+        f"🔔 <b>YANGI MUROJAAT</b>\n\n"
         f"👤 <b>Ism:</b> {name}\n"
         f"📞 <b>Tel:</b> {phone}\n"
         f"📌 <b>Mavzu:</b> {subject}\n\n"
@@ -36,11 +36,10 @@ def send_telegram_message(name, phone, subject, message):
     }
 
     try:
-        response = requests.post(url, data=data)
-        # Logga yozamiz: Telegram nima deb javob berdi?
-        print(f"🚀 Telegram Response: {response.status_code} - {response.text}")
+        requests.post(url, data=data)
     except Exception as e:
-        print(f"❌ Telegramga yuborishda xatolik: {e}")
+        print(f"Telegramga yuborishda xatolik: {e}")
+
 
 def home(request):
     if request.method == "POST":
@@ -52,7 +51,7 @@ def home(request):
 
         # Telegramga yuborish (fon rejimida - sayt tez ishlashi uchun)
         if name and phone:
-            send_telegram_message(name, phone, subject, message_text)
+            send_telegram(name, phone, subject,user_message)
 
             # Saytda yashil xabar chiqarish
             messages.success(request, "So'rovingiz qabul qilindi! Tez orada aloqaga chiqamiz.", extra_tags='frontend')
