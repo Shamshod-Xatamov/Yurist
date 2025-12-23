@@ -5,7 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="BmgnK4d8LcYAMkbi7RW_vzI9vjpzaf-3xG_A_y6-EZw" />
+
+
     <title>{% block title %}Shohjahon Abdurahimov - Yurist Advokat{% endblock %}</title>
+    <!-- 2. SEO TAVSIFI (Google uchun) -->
+    <meta name="description" content="{% block description %}Professional yuridik xizmatlar, korporativ huquq va sud himoyasi.{% endblock %}">
+    <meta name="keywords" content="yurist, advokat, toshkent, huquq, sud, firma ochish, ajrim">
+
+    <!-- 3. OPEN GRAPH (Telegram, Facebook, LinkedIn uchun) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}Shohjahon Abdurahimov - Yurist{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Professional yuridik xizmatlar va bepul konsultatsiya.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}https://firmayurist.uz/static/img/default-share.jpg{% endblock %}">
+
     <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>

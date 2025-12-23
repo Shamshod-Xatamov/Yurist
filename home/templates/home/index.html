@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+<!-- BOSH SAHIFA SEO -->
+{% block title %}{{ hero.main_title }} | FirmaYurist.uz{% endblock %}
+{% block description %}{{ hero.description|truncatewords:30 }}{% endblock %}
+
+{% block og_title %}{{ hero.main_title }}{% endblock %}
+{% block og_description %}{{ hero.description|truncatewords:30 }}{% endblock %}
+{% block og_image %}{% if hero.hero_image %}{{ hero.hero_image.url }}{% endif %}{% endblock %}
 
 {% block content %}
 

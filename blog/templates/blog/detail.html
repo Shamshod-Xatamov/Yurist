@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}{{ post.title }} | Blog{% endblock %}
+{% block description %}{{ post.excerpt|default:post.content|striptags|truncatewords:25 }}{% endblock %}
+
+{% block og_title %}{{ post.title }}{% endblock %}
+{% block og_description %}{{ post.excerpt|default:post.content|striptags|truncatewords:25 }}{% endblock %}
+{% block og_image %}{% if post.image %}{{ post.image.url }}{% endif %}{% endblock %}
+
 {% block content %}
 
 <!-- STYLE: Yurakcha va Buttonlar uchun (React dizaynini saqlash) -->
