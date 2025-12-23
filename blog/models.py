@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.urls import reverse
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 from django_ckeditor_5.fields import CKEditor5Field
@@ -37,6 +38,9 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('blog_detail', args=[str(self.uuid)])
 
 
 class Comment(models.Model):

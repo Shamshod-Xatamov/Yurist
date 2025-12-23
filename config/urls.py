@@ -21,18 +21,24 @@ from django.shortcuts import redirect
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap # <--- IMPORT
+from blog.sitemaps import BlogSitemap             # <--- IMPORT
+
+
+sitemaps = {
+    'blog': BlogSitemap,
+}
 admin_url = os.getenv('ADMIN_URL', 'admin').strip().strip('/')
 urlpatterns = [
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path(f'{admin_url}/', admin.site.urls),
     path('admin/', lambda request: redirect('/')),
-    # Bizning HOME appini ulaymiz
     path('', include('home.urls')),
     path('blog/', include('blog.urls')),
     path('dashboard/', include('dashboard.urls')),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
 ]
 
-# Rasmlar ishlashi uchun
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
